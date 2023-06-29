@@ -62,30 +62,61 @@ function createTimeOutEvent(object, dates) {
 // // expect(hoursWorkedOnDate(cRecord, "0044-03-15")).to.equal(2)
 
 function hoursWorkedOnDate(object, date) {
-  //   let timeIn = object.timeInEvents[0].hour;
-  //   let timeOut = object.timeOutEvents[0].hour;
-  //   let hoursElabsed = Math.round(timeOut - timeIn) * 0.01;
-  //grap the timeEvents
+  let DatesOwed;
   let timeInEvent = object.timeInEvents;
   let timeOutEvent = object.timeOutEvents;
-  console.log(object, timeInEvent);
+  let timeIn,
+    timeOut,
+    hoursElabsed = 0;
 
+  //grap the hour employee clocked out
+  for (const event of timeOutEvent) {
+    timeOut = parseInt(event.hour);
+  }
+  //grap the hour employee clocked in
+  for (const event of timeInEvent) {
+    timeIn = parseInt(event.hour);
+  }
+  for (const originalDate of timeOutEvent) {
+    let existingDate = originalDate.date;
+    if (existingDate == date) {
+      hoursElabsed += Math.round(timeOut - timeIn) * 0.01;
+    } else {
+      hoursElabsed = Math.round(timeOut - timeIn) * 0.01;
+    }
+  }
   return hoursElabsed;
 }
+//************************************************** */
 
 function wagesEarnedOnDate(object, date) {
   let PayOwed = object.payPerHour;
   let hoursElabsed = hoursWorkedOnDate(object, date);
-  return PayOwed * hoursElabsed;
+  let timeOutEvent = object.timeOutEvents;
+  let totatWagedEarned = 0;
+  for (const originalDate of timeOutEvent) {
+    let existingDate = originalDate.date;
+    if (existingDate !== date) {
+      totatWagedEarned = PayOwed * hoursElabsed;
+      console.log(totatWagedEarned);
+      return totatWagedEarned;
+    } else {
+      totatWagedEarned += PayOwed * hoursElabsed;
+      console.log(totatWagedEarned);
+      return totatWagedEarned;
+    }
+  }
 }
-
+//******************************************* */
 function allWagesFor(object) {
-  let updatedBpRecord11 = createTimeInEvent(object, "0044-03-14 0900");
-  let updatedBpRecord22 = createTimeOutEvent(object, "0044-03-14 2100");
+  let obgohome = createEmployeeRecord(object);
+  let updatedBpRecord11 = createTimeInEvent(obgohome, "0044-03-14 900");
+  let updatedBpRecord22 = createTimeOutEvent(obgohome, "0044-03-14 2100");
   //capture the dates
-  let hoursWorke = hoursWorkedOnDate(object);
-
-  console.log(updatedBpRecord11);
+  let hoursWorke = hoursWorkedOnDate(updatedBpRecord22, (date = "0044-03-15"));
+  let wages = wagesEarnedOnDate(updatedBpRecord22, (date = "0044-03-15"));
+  console.log(wages);
+  console.log(hoursWorke);
 }
 
 console.log(allWagesFor(["Julius", "Caesar", "General", 27]));
